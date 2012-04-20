@@ -5,6 +5,35 @@ import unfiltered.response._
 import java.net.URL
 import sbt.Using
 
+object GithubApi{
+  import scala.io.Source
+  import scala.util.parsing.json.JSON.parseFull
+
+  def getJson[T](url:String):T = {
+    val str  = Source.fromURL(url,"UTF-8").mkString
+    parseFull(str).get.asInstanceOf[T]
+  }
+
+  def repositoryNames(user:String):List[String] = {
+    type JsonType = Map[String,List[Map[String,String]]]
+    val json = getJson[JsonType]("https://github.com/api/v2/json/repos/show/" + user)
+    json("repositories").reverse.map{_.apply("url").replace("https://github.com/" + user + "/","")}
+  }
+
+  def branches(user:String,repository:String):List[String] = {
+    val json = getJson[Map[String,Map[String,String]]]("https://github.com/api/v2/json/repos/show/"+user+"/"+repository+"/branches") 
+    json("branches").keys.toList
+  }
+
+  def getInfo(user:String) =
+    repositoryNames(user).map{ n =>
+      Repository(n,branches(user,n))
+    }
+
+}
+
+case class Repository(name:String,branches:List[String])
+
 case class GhInfo(user:String,repo:String,branch:String = "master"){
   val github = "https://github.com/"
   val url = new URL(
@@ -20,11 +49,39 @@ case class GhInfo(user:String,repo:String,branch:String = "master"){
   }
 }
 
+object App{
+  @inline final val GITHUB = "https://github.com/"
+}
+
 class App extends unfiltered.filter.Plan {
+  import App._
+
+  def showUserRepos(user:String,repositories:List[Repository]) = {
+    <div>
+      <h1><a href={GITHUB + user}>{user}</a> repositories</h1>
+      <div>{
+        repositories.map{case Repository(name,branches) =>
+          <h2>{name}</h2>
+          <ul>{
+            branches.map{ branch =>
+              val ghLink = <x>{GITHUB}{user}/{name}/tree/{branch}</x>.text
+              val link = <x>{user}/{name}/{branch}</x>.text
+              <li>
+                <span style="font-size:large;"><a href={link}>{branch}</a></span>
+                <span style="font-size:x-small;"><a href={ghLink}>goto github</a></span>
+              </li>
+            }
+          }</ul>
+        }
+      }</div>
+    </div>
+  }
 
   def intent = {
     case GET(Path("/")) =>
       view(<p> hello </p>)
+    case GET(Path(Seg(user :: Nil))) =>
+      view(showUserRepos(user,GithubApi.getInfo(user)))
     case GET(Path(Seg(user :: repo :: Nil))) =>
       tree(GhInfo(user,repo))
     case GET(Path(Seg(user :: repo :: branch :: Nil))) =>
