@@ -52,14 +52,18 @@ case class GhInfo(user:String,repo:String)(branch:String = GithubApi.defaultBran
     <x>{GITHUB}{user}/{repo}/zipball/{branch}</x>.text
   )
 
-  def html(isFile:Boolean,name:String) = {
+  def html(f:FileInfo) = {
+    import f._
     val path = name.split('/').tail.mkString("/")
     val link = {
       <x>{GITHUB}{user}/{repo}/{if(isFile)"blob"else"tree"}/{branch}/{path}</x>.text
     }
-    <a href={link}>{path}</a>
+    <span><a href={link}>{path}</a> {if(isFile) size + " bytes" else ""}</span>
   }
 }
+
+case class FileInfo(isFile:Boolean,name:String,size:Long)
+
 
 class App extends unfiltered.filter.Plan {
   import GithubApi.GITHUB
@@ -100,16 +104,16 @@ class App extends unfiltered.filter.Plan {
     Using.urlInputStream(url){ in =>
       Using.zipInputStream(in){ zipIn =>
         Iterator.continually(zipIn.getNextEntry).takeWhile(null ne).map{ f =>
-          (! f.isDirectory) -> f.toString
+          FileInfo(! f.isDirectory, f.toString, f.getSize)
         }.toList
       }
     }
   }
 
   val toHtmlList = { i:GhInfo =>
-    {files:List[(Boolean,String)] =>
+    {files:List[FileInfo] =>
       <ul>{
-        files.map{f => <li>{(i.html _).tupled(f)}</li>}
+        files.map{f => <li>{i.html(f)}</li>}
       }</ul>
     }
   }
