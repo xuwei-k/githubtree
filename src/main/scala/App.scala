@@ -9,6 +9,9 @@ object GithubApi{
   import scala.io.Source
   import scala.util.parsing.json.JSON.parseFull
 
+  @inline final val GITHUB = "https://github.com/"
+  @inline private final val API2 = GITHUB + "api/v2/json/"
+
   def getJson[T](url:String):T = {
     val str  = Source.fromURL(url,"UTF-8").mkString
     parseFull(str).get.asInstanceOf[T]
@@ -16,16 +19,16 @@ object GithubApi{
 
   def repositories(user:String) = {
     type JsonType = Map[String,List[Map[String,String]]]
-    val json = getJson[JsonType]("https://github.com/api/v2/json/repos/show/" + user)
+    val json = getJson[JsonType](API2 + "repos/show/" + user)
     json("repositories").reverse
   }
 
   def repositoryNames(user:String):List[String] = {
-    repositories(user).map{_.apply("url").replace("https://github.com/" + user + "/","")}
+    repositories(user).map{_.apply("url").replace(GITHUB + user + "/","")}
   }
 
   def branches(user:String,repository:String):List[String] = {
-    val json = getJson[Map[String,Map[String,String]]]("https://github.com/api/v2/json/repos/show/"+user+"/"+repository+"/branches") 
+    val json = getJson[Map[String,Map[String,String]]](API2 + "repos/show/"+user+"/"+repository+"/branches")
     json("branches").keys.toList
   }
 
@@ -43,26 +46,23 @@ object GithubApi{
 case class Repository(name:String,branches:List[String])
 
 case class GhInfo(user:String,repo:String)(branch:String = GithubApi.defaultBranch(user,repo)){
-  val github = "https://github.com/"
+  import GithubApi._
+
   val url = new URL(
-    <x>{github}{user}/{repo}/zipball/{branch}</x>.text
+    <x>{GITHUB}{user}/{repo}/zipball/{branch}</x>.text
   )
 
   def html(isFile:Boolean,name:String) = {
     val path = name.split('/').tail.mkString("/")
     val link = {
-      <x>{github}{user}/{repo}/{if(isFile)"blob"else"tree"}/{branch}/{path}</x>.text
+      <x>{GITHUB}{user}/{repo}/{if(isFile)"blob"else"tree"}/{branch}/{path}</x>.text
     }
     <a href={link}>{path}</a>
   }
 }
 
-object App{
-  @inline final val GITHUB = "https://github.com/"
-}
-
 class App extends unfiltered.filter.Plan {
-  import App._
+  import GithubApi.GITHUB
 
   def showUserRepos(user:String,repositories:List[Repository]) = {
     <div>
