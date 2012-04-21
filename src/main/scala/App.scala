@@ -14,15 +14,23 @@ object GithubApi{
     parseFull(str).get.asInstanceOf[T]
   }
 
-  def repositoryNames(user:String):List[String] = {
+  def repositories(user:String) = {
     type JsonType = Map[String,List[Map[String,String]]]
     val json = getJson[JsonType]("https://github.com/api/v2/json/repos/show/" + user)
-    json("repositories").reverse.map{_.apply("url").replace("https://github.com/" + user + "/","")}
+    json("repositories").reverse
+  }
+
+  def repositoryNames(user:String):List[String] = {
+    repositories(user).map{_.apply("url").replace("https://github.com/" + user + "/","")}
   }
 
   def branches(user:String,repository:String):List[String] = {
     val json = getJson[Map[String,Map[String,String]]]("https://github.com/api/v2/json/repos/show/"+user+"/"+repository+"/branches") 
     json("branches").keys.toList
+  }
+
+  def defaultBranch(user:String,repository:String):String = {
+    repositories(user).find{_.apply("name") == repository}.get.getOrElse("master_branch","master")
   }
 
   def getInfo(user:String) =
@@ -34,7 +42,7 @@ object GithubApi{
 
 case class Repository(name:String,branches:List[String])
 
-case class GhInfo(user:String,repo:String,branch:String = "master"){
+case class GhInfo(user:String,repo:String)(branch:String = GithubApi.defaultBranch(user,repo)){
   val github = "https://github.com/"
   val url = new URL(
     <x>{github}{user}/{repo}/zipball/{branch}</x>.text
@@ -83,9 +91,9 @@ class App extends unfiltered.filter.Plan {
     case GET(Path(Seg(user :: Nil))) =>
       view(showUserRepos(user,GithubApi.getInfo(user)))
     case GET(Path(Seg(user :: repo :: Nil))) =>
-      tree(GhInfo(user,repo))
+      tree(GhInfo(user,repo)())
     case GET(Path(Seg(user :: repo :: branch :: Nil))) =>
-      tree(GhInfo(user,repo,branch))
+      tree(GhInfo(user,repo)(branch))
   }
 
   val files = { (url:URL) =>
