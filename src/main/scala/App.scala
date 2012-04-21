@@ -89,15 +89,23 @@ class App extends unfiltered.filter.Plan {
     </div>
   }
 
+  val sortBySize = (f:FileInfo) => f.size
+
+  def sortBySize_?(p:Params.Map) =
+    p.get("sort").flatMap{_.headOption.map{"size"==}}.getOrElse(false)
+
+  def sortFunc(p:Params.Map) =
+    if(sortBySize_?(p)) Some(sortBySize) else None
+
   def intent = {
     case GET(Path("/")) =>
       view(<p> hello </p>)
     case GET(Path(Seg(user :: Nil))) =>
       view(showUserRepos(user,GithubApi.getInfo(user)))
-    case GET(Path(Seg(user :: repo :: Nil))) =>
-      tree(GhInfo(user,repo)())
-    case GET(Path(Seg(user :: repo :: branch :: Nil))) =>
-      tree(GhInfo(user,repo)(branch))
+    case GET(Path(Seg(user :: repo :: Nil)) & Params(p)) =>
+      tree(GhInfo(user,repo)(),sortFunc(p))
+    case GET(Path(Seg(user :: repo :: branch :: Nil)) & Params(p)) =>
+      tree(GhInfo(user,repo)(branch),sortFunc(p))
   }
 
   val files = { (url:URL) =>
@@ -133,5 +141,9 @@ class App extends unfiltered.filter.Plan {
    )
   }
 
-  def tree(info:GhInfo) = view(toHtmlList(info)(files(info.url)))
+  def tree[A](info:GhInfo,sort:Option[FileInfo => A])(implicit ord:Ordering[A]) = {
+    val fileList = files(info.url)
+    val data = sort.map{f => fileList.sortBy(f)}.getOrElse(fileList)
+    view(toHtmlList(info)(data))
+  }
 }
