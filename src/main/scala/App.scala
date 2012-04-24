@@ -58,7 +58,7 @@ case class GhInfo(user:String,repo:String)(branch:String = GithubApi.defaultBran
     val link = {
       <x>{GITHUB}{user}/{repo}/{if(isFile)"blob"else"tree"}/{branch}/{path}</x>.text
     }
-    <span><a href={link}>{path}</a> {if(isFile) size + " bytes" else ""}</span>
+    <span><a target="_blank" href={link}>{path}</a> {if(isFile) size + " bytes" else ""}</span>
   }
 }
 
@@ -70,7 +70,7 @@ class App extends unfiltered.filter.Plan {
 
   def showUserRepos(user:String,repositories:List[Repository]) = {
     <div>
-      <h1><a href={GITHUB + user}>{user}</a> repositories</h1>
+      <h1><a target="_blank" href={GITHUB + user}>{user}</a> repositories</h1>
       <div>{
         repositories.map{case Repository(name,branches) =>
           <h2>{name}</h2>
@@ -79,8 +79,8 @@ class App extends unfiltered.filter.Plan {
               val ghLink = <x>{GITHUB}{user}/{name}/tree/{branch}</x>.text
               val link = <x>{user}/{name}/{branch}</x>.text
               <li>
-                <span style="font-size:large;"><a href={link}>{branch}</a></span>
-                <span style="font-size:x-small;"><a href={ghLink}>goto github</a></span>
+                <span style="font-size:large;"><a target="_blank" href={link}>{branch}</a></span>
+                <span style="font-size:x-small;"><a target="_blank" href={ghLink}>goto github</a></span>
               </li>
             }
           }</ul>
