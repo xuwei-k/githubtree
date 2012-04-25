@@ -77,7 +77,7 @@ class App extends unfiltered.filter.Plan {
           <ul>{
             branches.map{ branch =>
               val ghLink = <x>{GITHUB}{user}/{name}/tree/{branch}</x>.text
-              val link = <x>{user}/{name}/{branch}</x>.text
+              val link = <x>/{user}/{name}/{branch}</x>.text
               <li>
                 <span style="font-size:large;"><a target="_blank" href={link}>{branch}</a></span>
                 <span style="font-size:x-small;"><a target="_blank" href={ghLink}>goto github</a></span>
