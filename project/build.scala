@@ -11,6 +11,7 @@ object build extends Build{
     sbtappengine.Plugin.webSettings ++ Seq(
       organization := "com.github.xuwei-k",
       version := "0.1.0-SNAPSHOT",
+      scalaVersion := "2.9.2",
       libraryDependencies ++= Seq(
         "net.databinder" %% "unfiltered-filter" % UF,
         "net.databinder" %% "unfiltered-spec" % UF % "test",
@@ -22,6 +23,8 @@ object build extends Build{
        "jboss" at "https://repository.jboss.org/nexus/content/groups/public/"
       )
     ) :_*
+  ).dependsOn(
+    uri("git://github.com/xuwei-k/ghscala.git#da367f3bca5a4")
   )
 
 }
