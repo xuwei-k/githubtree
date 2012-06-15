@@ -10,6 +10,7 @@ object build extends Build{
   ).settings(
     sbtappengine.Plugin.webSettings ++ Seq(
       organization := "com.github.xuwei-k",
+      licenses := Seq("MIT License" -> url("http://www.opensource.org/licenses/mit-license.php")),
       version := "0.1.0-SNAPSHOT",
       scalaVersion := "2.9.2",
       libraryDependencies ++= Seq(
