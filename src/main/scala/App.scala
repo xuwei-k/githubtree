@@ -4,39 +4,22 @@ import unfiltered.request._
 import unfiltered.response._
 import java.net.URL
 import sbt.Using
+import com.github.xuwei_k.ghscala.{GhScala}
 
 object GithubApi{
-  import scala.io.Source
-  import scala.util.parsing.json.JSON.parseFull
 
   @inline final val GITHUB = "https://github.com/"
-  @inline private final val API2 = GITHUB + "api/v2/json/"
 
-  def getJson[T](url:String):T = {
-    val str  = Source.fromURL(url,"UTF-8").mkString
-    parseFull(str).get.asInstanceOf[T]
-  }
-
-  def repositories(user:String) = {
-    type JsonType = Map[String,List[Map[String,String]]]
-    val json = getJson[JsonType](API2 + "repos/show/" + user)
-    json("repositories").reverse
-  }
-
-  def repositoryNames(user:String):List[String] = {
-    repositories(user).map{_.apply("url").replace(GITHUB + user + "/","")}
-  }
+  def repositoryNames(user:String):List[String] = GhScala.repos(user).map(_.name)
 
   def branches(user:String,repository:String):List[String] = {
-    val json = getJson[Map[String,Map[String,String]]](API2 + "repos/show/"+user+"/"+repository+"/branches")
-    json("branches").keys.toList
+    GhScala.refs(user,repository).map{_.name}
   }
 
-  def defaultBranch(user:String,repository:String):String = {
-    repositories(user).find{_.apply("name") == repository}.get.getOrElse("master_branch","master")
-  }
+  def defaultBranch(user:String,repository:String):String =
+    GhScala.repo(user,repository).master
 
-  def getInfo(user:String) =
+  def getInfo(user:String):List[Repository] =
     repositoryNames(user).map{ n =>
       Repository(n,branches(user,n))
     }
