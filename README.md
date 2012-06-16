@@ -1,4 +1,4 @@
-# githubtree
+# githubtree [![Build Status](https://secure.travis-ci.org/xuwei-k/githubtree.png)](http://travis-ci.org/xuwei-k/githubtree)
 
 http://githubtree.appspot.com/xuwei-k/githubtree
 
