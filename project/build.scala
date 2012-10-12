@@ -2,7 +2,7 @@ import sbt._,Keys._
 
 object build extends Build{
 
-  val UF = "0.6.3"
+  val UF = "0.6.4"
 
   lazy val root = Project(
     "githubtree",
