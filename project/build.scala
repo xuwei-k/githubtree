@@ -25,7 +25,7 @@ object build extends Build{
       )
     ) :_*
   ).dependsOn(
-    uri("git://github.com/xuwei-k/ghscala.git#da367f3bca5a4")
+    uri("git://github.com/xuwei-k/ghscala.git#1bded977f0ce29b")
   )
 
 }
