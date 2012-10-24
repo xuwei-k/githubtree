@@ -113,6 +113,7 @@ class App extends unfiltered.filter.Plan {
     Html(
      <html>
       <head>
+        <meta name="robots" content="noindex,nofollow" />
         <title>githubtree</title>
       </head>
       <body>
