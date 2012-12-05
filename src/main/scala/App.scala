@@ -80,7 +80,7 @@ class App extends unfiltered.filter.Plan {
   def sortFunc(p:Params.Map) =
     if(sortBySize_?(p)) Some(sortBySize) else None
 
-  def intent = {
+  val main:unfiltered.filter.Plan.Intent = {
     case GET(Path("/")) =>
       view(<p> hello </p>)
     case GET(Path(Seg(user :: Nil))) =>
@@ -89,6 +89,17 @@ class App extends unfiltered.filter.Plan {
       tree(GhInfo(user,repo)(),sortFunc(p))
     case GET(Path(Seg(user :: repo :: branch :: Nil)) & Params(p)) =>
       tree(GhInfo(user,repo)(branch),sortFunc(p))
+  }
+
+  override def intent = {
+    case request if main.isDefinedAt(request) =>
+    try{
+      main(request)
+    }catch{
+      case e:Throwable =>
+        e.printStackTrace
+        ResponseString(e.toString + "\n\n" + e.getStackTrace.mkString("\n")) ~> InternalServerError
+    }
   }
 
   val files = { (url:URL) =>
