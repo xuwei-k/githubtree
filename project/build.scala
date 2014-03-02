@@ -15,6 +15,7 @@ object build extends Build{
       scalaVersion := "2.10.4-RC3",
       libraryDependencies ++= Seq(
 //        "com.github.xuwei-k" %% "ghscala" % "0.2.4",
+        "net.databinder" %% "dispatch-http" % "0.8.10",
         "net.databinder" %% "unfiltered-filter" % UF,
         "net.databinder" %% "unfiltered-spec" % UF % "test",
         "javax.servlet" % "servlet-api" % "2.3" % "provided",

@@ -10,11 +10,13 @@ import scalaz.Id.Id
 
 object GithubApi{
 
-  val stdSource: Interpreter[Id] =
+  private[this] val _dispatch: Interpreter[Id] =
     new Interpreter[Id] {
+      val userAgentHeader = Map("User-Agent" -> "dispatch http client")
       def go[A](r: RequestF[A]) = r match {
         case o @ RequestF.One() => try {
-          val str = scala.io.Source.fromURL(o.req.getUrl).mkString
+          import dispatch.classic._
+          val str = Http((url(o.req.getUrl.toString) <:< userAgentHeader).as_str)
           o.decode(o.req, o.parse(o.req, str))
         } catch {
           case e: scalaj.http.HttpException =>
@@ -24,6 +26,8 @@ object GithubApi{
           t.f(run(t.x), run(t.y))
       }
     }
+
+  val dispatchInterpreter = _dispatch.interpreter
 
   @inline final val GITHUB = "https://github.com/"
 
@@ -51,7 +55,7 @@ object GithubApi{
 
 final case class Repository(name: String, branches: List[String])
 
-final case class GhInfo(user: String, repo: String)(branch: String = GithubApi.defaultBranch(user, repo).interpretBy(GithubApi.stdSource.interpreter).getOrElse("master")){
+final case class GhInfo(user: String, repo: String)(branch: String = GithubApi.defaultBranch(user, repo).interpretBy(GithubApi.dispatchInterpreter).getOrElse("master")){
   import GithubApi._
 
   val url = new URL(
@@ -109,9 +113,10 @@ class App extends unfiltered.filter.Plan {
     case GET(Path(Seg(user :: Nil))) =>
       GithubApi.getInfo(user).map(repos =>
         view(showUserRepos(user, repos))
-      ).interpretBy(GithubApi.stdSource.interpreter).valueOr(e =>
+      ).interpretBy(GithubApi.dispatchInterpreter).valueOr{e =>
+        System.err.println(e.toString)
         throw new Exception(e.toString)
-      )
+      }
     case GET(Path(Seg(user :: repo :: Nil)) & Params(p)) =>
       tree(GhInfo(user, repo)(), sortFunc(p))
     case GET(Path(Seg(user :: repo :: branch :: Nil)) & Params(p)) =>
