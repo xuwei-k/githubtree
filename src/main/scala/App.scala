@@ -5,9 +5,25 @@ import unfiltered.response._
 import java.net.URL
 import sbt.Using
 import ghscala._
-import scalaz.{Ordering => _, _}
+import scalaz.{Ordering => _, One => _, Two => _, _}
+import scalaz.Id.Id
 
 object GithubApi{
+
+  val stdSource: Interpreter[Id] =
+    new Interpreter[Id] {
+      def go[A](r: RequestF[A]) = r match {
+        case o @ RequestF.One() => try {
+          val str = scala.io.Source.fromURL(o.req.getUrl).mkString
+          o.decode(o.req, o.parse(o.req, str))
+        } catch {
+          case e: scalaj.http.HttpException =>
+            o.error(Error.http(e))
+        }
+        case t @ RequestF.Two() =>
+          t.f(run(t.x), run(t.y))
+      }
+    }
 
   @inline final val GITHUB = "https://github.com/"
 
@@ -35,7 +51,7 @@ object GithubApi{
 
 final case class Repository(name: String, branches: List[String])
 
-final case class GhInfo(user: String, repo: String)(branch: String = GithubApi.defaultBranch(user, repo).interpret.getOrElse("master")){
+final case class GhInfo(user: String, repo: String)(branch: String = GithubApi.defaultBranch(user, repo).interpretBy(GithubApi.stdSource.interpreter).getOrElse("master")){
   import GithubApi._
 
   val url = new URL(
@@ -93,7 +109,7 @@ class App extends unfiltered.filter.Plan {
     case GET(Path(Seg(user :: Nil))) =>
       GithubApi.getInfo(user).map(repos =>
         view(showUserRepos(user, repos))
-      ).interpret.valueOr(e =>
+      ).interpretBy(GithubApi.stdSource.interpreter).valueOr(e =>
         throw new Exception(e.toString)
       )
     case GET(Path(Seg(user :: repo :: Nil)) & Params(p)) =>
