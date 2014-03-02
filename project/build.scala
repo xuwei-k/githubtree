@@ -2,7 +2,7 @@ import sbt._,Keys._
 
 object build extends Build{
 
-  val UF = "0.6.4"
+  val UF = "0.7.1"
 
   lazy val root = Project(
     "githubtree",
@@ -12,8 +12,9 @@ object build extends Build{
       organization := "com.github.xuwei-k",
       licenses := Seq("MIT License" -> url("http://www.opensource.org/licenses/mit-license.php")),
       version := "0.1.0-SNAPSHOT",
-      scalaVersion := "2.9.2",
+      scalaVersion := "2.10.4-RC3",
       libraryDependencies ++= Seq(
+//        "com.github.xuwei-k" %% "ghscala" % "0.2.4",
         "net.databinder" %% "unfiltered-filter" % UF,
         "net.databinder" %% "unfiltered-spec" % UF % "test",
         "javax.servlet" % "servlet-api" % "2.3" % "provided",
@@ -25,7 +26,7 @@ object build extends Build{
       )
     ) :_*
   ).dependsOn(
-    uri("git://github.com/xuwei-k/ghscala.git#1bded977f0ce29b")
+    uri("git://github.com/xuwei-k/ghscala.git#74064df9b")
   )
 
 }
