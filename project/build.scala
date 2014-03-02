@@ -14,10 +14,12 @@ object build extends Build{
       version := "0.1.0-SNAPSHOT",
       scalaVersion := "2.10.4-RC3",
       libraryDependencies ++= Seq(
-//        "com.github.xuwei-k" %% "ghscala" % "0.2.4",
-        "net.databinder" %% "dispatch-http" % "0.8.10",
+        // could not use new version scalaj-http
+        // Google App Engine does not allow reflection and `java.nex.Proxy`
+        "org.scalaj"  %% "scalaj-http" % "0.3.6",
         "net.databinder" %% "unfiltered-filter" % UF,
         "net.databinder" %% "unfiltered-spec" % UF % "test",
+//        "com.github.xuwei-k" %% "ghscala" % "0.2.4",
         "javax.servlet" % "servlet-api" % "2.3" % "provided",
         "org.eclipse.jetty" % "jetty-webapp" % "7.4.5.v20110725" % "container"
       ),
@@ -27,7 +29,7 @@ object build extends Build{
       )
     ) :_*
   ).dependsOn(
-    uri("git://github.com/xuwei-k/ghscala.git#74064df9b")
+    ProjectRef(uri("git://github.com/xuwei-k/ghscala.git#33c4e2632a"), "core")
   )
 
 }

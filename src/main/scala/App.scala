@@ -9,25 +9,26 @@ import scalaz.{Ordering => _, One => _, Two => _, _}
 import scalaz.Id.Id
 
 object GithubApi{
+  import RequestF._
 
-  private[this] val _dispatch: Interpreter[Id] =
-    new Interpreter[Id] {
-      val userAgentHeader = Map("User-Agent" -> "dispatch http client")
-      def go[A](r: RequestF[A]) = r match {
-        case o @ RequestF.One() => try {
-          import dispatch.classic._
-          val str = Http((url(o.req.getUrl.toString) <:< userAgentHeader).as_str)
-          o.decode(o.req, o.parse(o.req, str))
-        } catch {
-          case e: scalaj.http.HttpException =>
-            o.error(Error.http(e))
-        }
-        case t @ RequestF.Two() =>
-          t.f(run(t.x), run(t.y))
-      }
+  private def runOne[A](o: One[A], conf: Config): A =
+    try {
+      val s = ScalajHttp(conf(o.req)).asString
+      o.decode(o.req, o.parse(o.req, s))
+    } catch {
+      case e: scalaj.http.HttpException =>
+        o.error(Error.http(e))
     }
 
-  val dispatchInterpreter = _dispatch.interpreter
+  val scalajInterpreter =
+    new Interpreter[Id] {
+      def go[A](a: RequestF[A]) = a match {
+        case o @ One() =>
+          runOne(o, Endo.idEndo)
+        case t @ Two() =>
+          t.f(run(t.x), run(t.y))
+      }
+    }.interpreter
 
   @inline final val GITHUB = "https://github.com/"
 
@@ -53,10 +54,11 @@ object GithubApi{
 
 }
 
+import GithubApi._
+
 final case class Repository(name: String, branches: List[String])
 
-final case class GhInfo(user: String, repo: String)(branch: String = GithubApi.defaultBranch(user, repo).interpretBy(GithubApi.dispatchInterpreter).getOrElse("master")){
-  import GithubApi._
+final case class GhInfo(user: String, repo: String)(branch: String = GithubApi.defaultBranch(user, repo).interpretBy(scalajInterpreter).getOrElse("master")){
 
   val url = new URL(
     s"${GITHUB}${user}/${repo}/zipball/${branch}"
@@ -113,9 +115,13 @@ class App extends unfiltered.filter.Plan {
     case GET(Path(Seg(user :: Nil))) =>
       GithubApi.getInfo(user).map(repos =>
         view(showUserRepos(user, repos))
-      ).interpretBy(GithubApi.dispatchInterpreter).valueOr{e =>
-        System.err.println(e.toString)
-        throw new Exception(e.toString)
+      ).interpretBy(scalajInterpreter).valueOr{
+        case ghscala.Error.Http(e) =>
+          System.err.println(e.toString)
+          throw e
+        case e =>
+          System.err.println(e)
+          throw new Exception(e.toString)
       }
     case GET(Path(Seg(user :: repo :: Nil)) & Params(p)) =>
       tree(GhInfo(user, repo)(), sortFunc(p))
@@ -130,6 +136,8 @@ class App extends unfiltered.filter.Plan {
     }catch{
       case e: Throwable =>
         e.printStackTrace
+        System.err.println(e)
+        System.err.println(e.getStackTrace.mkString("\n"))
         ResponseString(e.toString + "\n\n" + e.getStackTrace.mkString("\n")) ~> InternalServerError
     }
   }
