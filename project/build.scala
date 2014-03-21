@@ -12,7 +12,7 @@ object build extends Build{
       organization := "com.github.xuwei-k",
       licenses := Seq("MIT License" -> url("http://www.opensource.org/licenses/mit-license.php")),
       version := "0.1.0-SNAPSHOT",
-      scalaVersion := "2.10.4-RC3",
+      scalaVersion := "2.10.4",
       libraryDependencies ++= Seq(
         // could not use new version scalaj-http
         // Google App Engine does not allow reflection and `java.nex.Proxy`
