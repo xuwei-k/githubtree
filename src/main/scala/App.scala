@@ -4,6 +4,7 @@ import unfiltered.request._
 import unfiltered.response._
 import java.net.URL
 import sbt.Using
+import httpz._
 import ghscala._
 import scalaz.{Ordering => _, One => _, Two => _, _}
 import scalaz.Id.Id
@@ -116,7 +117,7 @@ class App extends unfiltered.filter.Plan {
       GithubApi.getInfo(user).map(repos =>
         view(showUserRepos(user, repos))
       ).interpretBy(scalajInterpreter).valueOr{
-        case ghscala.Error.Http(e) =>
+        case httpz.Error.Http(e) =>
           System.err.println(e.toString)
           throw e
         case e =>
