@@ -110,9 +110,26 @@ class App extends unfiltered.filter.Plan {
   def sortFunc(p: Params.Map) =
     if(sortBySize_?(p)) Some(sortBySize) else None
 
+  object Hub {
+    def unapply(p: Params.Map): Boolean =
+      p.isDefinedAt("hub")
+  }
+
   val main: unfiltered.filter.Plan.Intent = {
     case GET(Path("/")) =>
       view(<p> hello </p>)
+    case GET(Path(Seg(user :: Nil)) & Params(Hub())) =>
+      Github.repos(user).map( repos =>
+        PlainTextContent ~> ResponseString(
+          repos.filterNot(_.fork).map(r =>
+            "hub clone " + user + "/" + r.name
+          ).mkString(" &&\n")
+        )
+      ).mapRequest(
+        Endo(_.addParam("per_page", "100"))
+      ).interpretBy(
+        scalajInterpreter
+      ).valueOr(throw _)
     case GET(Path(Seg(user :: Nil))) =>
       GithubApi.getInfo(user).map(repos =>
         view(showUserRepos(user, repos))
