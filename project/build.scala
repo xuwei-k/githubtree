@@ -20,7 +20,8 @@ object build extends Build{
         "org.scalaj"  %% "scalaj-http" % "0.3.6",
         "net.databinder" %% "unfiltered-filter" % UF,
         "net.databinder" %% "unfiltered-spec" % UF % "test",
-        "com.github.xuwei-k" %% "ghscala-core" % "0.2.6",
+        "com.github.xuwei-k" %% "ghscala" % "0.2.9",
+        "com.github.xuwei-k" %% "httpz" % "0.2.9",
         "javax.servlet" % "servlet-api" % "2.3" % "provided",
         "org.eclipse.jetty" % "jetty-webapp" % "7.4.5.v20110725" % "container"
       ),
