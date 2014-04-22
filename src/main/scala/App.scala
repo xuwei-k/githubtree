@@ -4,32 +4,13 @@ import unfiltered.request._
 import unfiltered.response._
 import java.net.URL
 import sbt.Using
-import httpz._
+import httpz._, native._
 import ghscala._
 import scalaz.{Ordering => _, One => _, Two => _, _}
 import scalaz.Id.Id
 
 object GithubApi{
   import RequestF._
-
-  private def runOne[A](o: One[A], conf: Config): A =
-    try {
-      val s = ScalajHttp(conf(o.req)).asString
-      o.decode(o.req, o.parse(o.req, s))
-    } catch {
-      case e: scalaj.http.HttpException =>
-        o.error(Error.http(e))
-    }
-
-  val scalajInterpreter =
-    new Interpreter[Id] {
-      def go[A](a: RequestF[A]) = a match {
-        case o @ One() =>
-          runOne(o, Endo.idEndo)
-        case t @ Two() =>
-          t.f(run(t.x), run(t.y))
-      }
-    }.interpreter
 
   @inline final val GITHUB = "https://github.com/"
 
@@ -59,7 +40,7 @@ import GithubApi._
 
 final case class Repository(name: String, branches: List[String])
 
-final case class GhInfo(user: String, repo: String)(branch: String = GithubApi.defaultBranch(user, repo).interpretBy(scalajInterpreter).getOrElse("master")){
+final case class GhInfo(user: String, repo: String)(branch: String = GithubApi.defaultBranch(user, repo).interpret.getOrElse("master")){
 
   val url = new URL(
     s"${GITHUB}${user}/${repo}/zipball/${branch}"
@@ -127,13 +108,11 @@ class App extends unfiltered.filter.Plan {
         )
       ).mapRequest(
         Endo(_.addParam("per_page", "100"))
-      ).interpretBy(
-        scalajInterpreter
-      ).valueOr(throw _)
+      ).interpret.valueOr(throw _)
     case GET(Path(Seg(user :: Nil))) =>
       GithubApi.getInfo(user).map(repos =>
         view(showUserRepos(user, repos))
-      ).interpretBy(scalajInterpreter).valueOr{
+      ).interpret.valueOr{
         case httpz.Error.Http(e) =>
           System.err.println(e.toString)
           throw e
