@@ -2,8 +2,6 @@ import sbt._,Keys._
 
 object build extends Build{
 
-  val UF = "0.7.1"
-
   lazy val root = Project(
     "githubtree",
     file(".")
@@ -16,8 +14,7 @@ object build extends Build{
       scalacOptions ++= Seq("-deprecation", "-unchecked", "-language:_"),
       resolvers += Opts.resolver.sonatypeReleases,
       libraryDependencies ++= Seq(
-        "net.databinder" %% "unfiltered-filter" % UF,
-        "net.databinder" %% "unfiltered-spec" % UF % "test",
+        "net.databinder" %% "unfiltered-filter" % "0.8.0",
         "com.github.xuwei-k" %% "ghscala" % "0.2.10",
         "com.github.xuwei-k" %% "httpz-native" % "0.2.10",
         "javax.servlet" % "servlet-api" % "2.3" % "provided",
