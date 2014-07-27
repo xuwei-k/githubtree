@@ -7,10 +7,8 @@ import sbt.Using
 import httpz._, native._
 import ghscala._
 import scalaz.{Ordering => _, One => _, Two => _, _}
-import scalaz.Id.Id
 
 object GithubApi{
-  import RequestF._
 
   @inline final val GITHUB = "https://github.com/"
 
