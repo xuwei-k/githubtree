@@ -98,9 +98,11 @@ class App extends unfiltered.filter.Plan {
     if(p.isDefinedAt("only_file")) _.isFile
     else Function.const(true)
 
+  private[this] final val githubRepo = "https://github.com/xuwei-k/githubtree"
+
   val main: unfiltered.filter.Plan.Intent = {
     case GET(Path("/")) =>
-      view(<p> hello </p>)
+      view(<h1><a href={githubRepo} target="_blank">{githubRepo}</a></h1>)
     case GET(Path(Seg(user :: Nil)) & Params(Hub())) =>
       Github.repos(user).map( repos =>
         PlainTextContent ~> ResponseString(
