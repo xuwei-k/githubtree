@@ -171,9 +171,26 @@ class App extends unfiltered.filter.Plan {
    )
   }
 
+  private def groupByExtension(data: List[FileInfo]) = {
+    val map = data.filter(_.isFile).groupBy{ file =>
+      Option(file.name.split('.')).filter(_.size > 1).flatMap(_.lastOption)
+    }
+    val list = map.collect{case (Some(k), v) =>
+      k -> v.size
+    }.toList.sortBy(_._2).reverse
+
+    <div><ul>{
+      list.map{ case (name, count) =>
+        <li>.{name} {count}</li>
+      } ++ map.get(None).map{ other =>
+        <li>other {other.size}</li>
+      }
+    }</ul></div>
+  }
+
   def tree[A](info: GhInfo, sort: Option[FileInfo => A])(implicit ord: Ordering[A]) = {
     val fileList = files(info.url)
     val data = sort.map{f => fileList.sortBy(f)}.getOrElse(fileList)
-    view(toHtmlList(info)(data))
+    view(toHtmlList(info)(data) ++ <hr /> ++ groupByExtension(data))
   }
 }
