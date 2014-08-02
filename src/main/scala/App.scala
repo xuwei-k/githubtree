@@ -94,6 +94,10 @@ class App extends unfiltered.filter.Plan {
       p.isDefinedAt("hub")
   }
 
+  private def onlyFile(p: Params.Map): FileInfo => Boolean =
+    if(p.isDefinedAt("only_file")) _.isFile
+    else Function.const(true)
+
   val main: unfiltered.filter.Plan.Intent = {
     case GET(Path("/")) =>
       view(<p> hello </p>)
@@ -119,9 +123,9 @@ class App extends unfiltered.filter.Plan {
           throw new Exception(e.toString)
       }
     case GET(Path(Seg(user :: repo :: Nil)) & Params(p)) =>
-      tree(GhInfo(user, repo)(), sortFunc(p))
+      tree(GhInfo(user, repo)(), sortFunc(p), onlyFile(p))
     case GET(Path(Seg(user :: repo :: branch :: Nil)) & Params(p)) =>
-      tree(GhInfo(user, repo)(branch), sortFunc(p))
+      tree(GhInfo(user, repo)(branch), sortFunc(p), onlyFile(p))
   }
 
   override def intent = {
@@ -184,13 +188,13 @@ class App extends unfiltered.filter.Plan {
         <li>.{name} {count}</li>
       } ++ map.get(None).map{ other =>
         <li>other {other.size}</li>
-      }
+      }.toList
     }</ul></div>
   }
 
-  def tree[A](info: GhInfo, sort: Option[FileInfo => A])(implicit ord: Ordering[A]) = {
+  def tree[A](info: GhInfo, sort: Option[FileInfo => A], filter: FileInfo => Boolean)(implicit ord: Ordering[A]) = {
     val fileList = files(info.url)
-    val data = sort.map{f => fileList.sortBy(f)}.getOrElse(fileList)
+    val data = sort.map{f => fileList.sortBy(f)}.getOrElse(fileList).filter(filter)
     view(toHtmlList(info)(data) ++ <hr /> ++ groupByExtension(data))
   }
 }
