@@ -24,8 +24,8 @@ object build extends Build{
       resolvers += Opts.resolver.sonatypeReleases,
       libraryDependencies ++= Seq(
         "net.databinder" %% "unfiltered-filter" % "0.8.0",
-        "com.github.xuwei-k" %% "ghscala" % "0.2.12",
-        "com.github.xuwei-k" %% "httpz-native" % "0.2.12",
+        "com.github.xuwei-k" %% "ghscala" % "0.2.13",
+        "com.github.xuwei-k" %% "httpz-native" % "0.2.13",
         "javax.servlet" % "servlet-api" % "2.3" % "provided",
         "org.eclipse.jetty" % "jetty-webapp" % "7.4.5.v20110725" % "container"
       ),
