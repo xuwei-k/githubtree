@@ -54,7 +54,7 @@ final case class GhInfo(user: String, repo: String)(branch: String = GithubApi.d
   }
 }
 
-case class FileInfo(isFile:Boolean,name:String,size:Long)
+case class FileInfo(isFile: Boolean, name: String, size: Long)
 
 
 class App extends unfiltered.filter.Plan {
