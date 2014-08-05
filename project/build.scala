@@ -26,6 +26,7 @@ object build extends Build{
         "net.databinder" %% "unfiltered-filter" % "0.8.0",
         "com.github.xuwei-k" %% "ghscala" % "0.2.13",
         "com.github.xuwei-k" %% "httpz-native" % "0.2.13",
+        "com.chuusai" %% "shapeless" % "2.0.0" cross CrossVersion.full,
         "javax.servlet" % "servlet-api" % "2.3" % "provided",
         "org.eclipse.jetty" % "jetty-webapp" % "7.4.5.v20110725" % "container"
       ),

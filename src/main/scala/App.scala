@@ -161,12 +161,18 @@ class App extends unfiltered.filter.Plan {
     }
   }
 
+  private[this] final val STYLE =
+    """td, th{border: solid 1px #000000}
+      |table{ border-collapse: collapse;}
+    """.stripMargin
+
   val view = { (body: scala.xml.NodeSeq) =>
     Html(
      <html>
       <head>
         <meta name="robots" content="noindex,nofollow" />
         <title>githubtree</title>
+        <style type="text/css">{STYLE}</style>
       </head>
       <body>
         <div>
@@ -181,17 +187,19 @@ class App extends unfiltered.filter.Plan {
     val map = data.filter(_.isFile).groupBy{ file =>
       Option(file.name.split('.')).filter(_.size > 1).flatMap(_.lastOption)
     }
-    val list = map.collect{case (Some(k), v) =>
-      k -> v.size
-    }.toList.sortBy(_._2).reverse
+    import shapeless._, syntax.singleton._, record._
+    val list = map.collect{ case (Some(k), v) =>
+      ("extension" ->> k) :: ("file count" ->> v.size) :: ("sum bytes" ->> v.view.map(_.size).sum) :: HNil
+    }.toList.sortBy(_("file count")).reverse
 
-    <div><ul>{
-      list.map{ case (name, count) =>
-        <li>.{name} {count}</li>
+    <div><ul><table>
+      <tr><th>extension name</th><th>file count</th><th>sum bytes</th></tr>{
+      list.map{ x =>
+        <tr><td>.{x("extension")}</td><td>{x("file count")}</td><td>{x("sum bytes")}</td></tr>
       } ++ map.get(None).map{ other =>
-        <li>other {other.size}</li>
+        <tr><td>other</td><td>{other.size}</td><td>{other.view.map(_.size).sum}</td></tr>
       }.toList
-    }</ul></div>
+    }</table></ul></div>
   }
 
   def tree[A](info: GhInfo, sort: Option[FileInfo => A], filter: FileInfo => Boolean)(implicit ord: Ordering[A]) = {
