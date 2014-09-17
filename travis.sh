@@ -1,5 +1,5 @@
 #!/bin/sh
-SDK=appengine-java-sdk-1.9.8
+SDK=appengine-java-sdk-1.9.10
 SDK_ZIP=$SDK.zip
 wget https://storage.googleapis.com/appengine-sdks/featured/$SDK_ZIP
 unzip $SDK_ZIP &&
