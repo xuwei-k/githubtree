@@ -24,7 +24,7 @@ object build extends Build{
       resolvers += Opts.resolver.sonatypeReleases,
       resolvers += Resolver.url("typesafe", url("http://repo.typesafe.com/typesafe/ivy-releases/"))(Resolver.ivyStylePatterns),
       libraryDependencies ++= (
-        ("net.databinder" %% "unfiltered-filter" % "0.8.1") ::
+        ("net.databinder" %% "unfiltered-filter" % "0.8.2") ::
         ("com.github.xuwei-k" %% "ghscala" % "0.2.13") ::
         ("com.github.xuwei-k" %% "httpz-native" % "0.2.13") ::
         ("com.chuusai" %% "shapeless" % "2.0.0") ::
