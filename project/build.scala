@@ -32,8 +32,8 @@ object build extends Build{
       resolvers += Resolver.url("typesafe", url("http://repo.typesafe.com/typesafe/ivy-releases/"))(Resolver.ivyStylePatterns),
       libraryDependencies ++= (
         ("net.databinder" %% "unfiltered-filter" % unfilteredVersion) ::
-        ("com.github.xuwei-k" %% "ghscala" % "0.2.13") ::
-        ("com.github.xuwei-k" %% "httpz-native" % "0.2.13") ::
+        ("com.github.xuwei-k" %% "ghscala" % "0.2.14") ::
+        ("com.github.xuwei-k" %% "httpz-native" % "0.2.14") ::
         ("com.chuusai" %% "shapeless" % "2.0.0") ::
         ("javax.servlet" % "servlet-api" % "2.3" % "provided") ::
         ("org.eclipse.jetty" % "jetty-webapp" % "7.4.5.v20110725" % "container") ::
