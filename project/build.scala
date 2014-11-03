@@ -2,6 +2,11 @@ import sbt._,Keys._
 
 object build extends Build{
 
+  // https://github.com/unfiltered/unfiltered/blob/v0.8.1/project/common.scala#L6
+  // https://github.com/unfiltered/unfiltered/blob/v0.8.2/project/common.scala#L6
+  // https://code.google.com/p/googleappengine/issues/detail?id=3091
+  private final val unfilteredVersion = "0.8.1"
+
   lazy val root = Project(
     "githubtree",
     file(".")
@@ -26,7 +31,7 @@ object build extends Build{
       resolvers += Opts.resolver.sonatypeReleases,
       resolvers += Resolver.url("typesafe", url("http://repo.typesafe.com/typesafe/ivy-releases/"))(Resolver.ivyStylePatterns),
       libraryDependencies ++= (
-        ("net.databinder" %% "unfiltered-filter" % "0.8.2") ::
+        ("net.databinder" %% "unfiltered-filter" % unfilteredVersion) ::
         ("com.github.xuwei-k" %% "ghscala" % "0.2.13") ::
         ("com.github.xuwei-k" %% "httpz-native" % "0.2.13") ::
         ("com.chuusai" %% "shapeless" % "2.0.0") ::
