@@ -1,5 +1,7 @@
 language: scala
 
+sudo: false
+
 script:
   - rm project/plugins.sbt
   - rm appengine.sbt
