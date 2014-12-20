@@ -1,3 +1,6 @@
 language: scala
 
-script: sh ./travis.sh
+script:
+  - rm project/plugins.sbt
+  - rm appengine.sbt
+  - sbt test
