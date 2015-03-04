@@ -34,7 +34,7 @@ libraryDependencies ++= (
   ("net.databinder" %% "unfiltered-filter" % unfilteredVersion) ::
   ("com.github.xuwei-k" %% "ghscala" % "0.2.15") ::
   ("com.github.xuwei-k" %% "httpz-native" % "0.2.16") ::
-  ("com.chuusai" %% "shapeless" % "2.0.0") ::
+  ("com.chuusai" %% "shapeless" % "2.1.0") ::
   ("javax.servlet" % "servlet-api" % "2.3" % "provided") ::
   ("org.scala-sbt" %% "io" % sbtVersion.value) ::
   Nil
