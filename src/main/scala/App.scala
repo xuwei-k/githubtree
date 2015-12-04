@@ -126,8 +126,8 @@ class App extends unfiltered.filter.Plan {
       }
     case GET(Path(Seg(user :: repo :: Nil)) & Params(p)) =>
       tree(GhInfo(user, repo)(), sortFunc(p), onlyFile(p))
-    case GET(Path(Seg(user :: repo :: branch :: Nil)) & Params(p)) =>
-      tree(GhInfo(user, repo)(branch), sortFunc(p), onlyFile(p))
+    case GET(Path(Seg(user :: repo :: branch)) & Params(p)) =>
+      tree(GhInfo(user, repo)(branch.mkString("/")), sortFunc(p), onlyFile(p))
   }
 
   override def intent = {
