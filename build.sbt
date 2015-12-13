@@ -11,7 +11,7 @@ licenses := Seq("MIT License" -> url("http://www.opensource.org/licenses/mit-lic
 
 version := "0.1.0-SNAPSHOT"
 
-scalaVersion := "2.11.6"
+scalaVersion := "2.11.7"
 
 scalacOptions ++= (
   "-language:postfixOps" ::
@@ -34,9 +34,9 @@ resolvers += Resolver.url("typesafe", url("http://repo.typesafe.com/typesafe/ivy
 
 libraryDependencies ++= (
   ("net.databinder" %% "unfiltered-filter" % unfilteredVersion) ::
-  ("com.github.xuwei-k" %% "ghscala" % "0.2.15") ::
-  ("com.github.xuwei-k" %% "httpz-native" % "0.2.16") ::
-  ("com.chuusai" %% "shapeless" % "2.1.0") ::
+  ("com.github.xuwei-k" %% "ghscala" % "0.3.0") ::
+  ("com.github.xuwei-k" %% "httpz-native" % "0.3.0") ::
+  ("com.chuusai" %% "shapeless" % "2.2.5") ::
   ("javax.servlet" % "servlet-api" % "2.3" % "provided") ::
   ("org.scala-sbt" %% "io" % sbtVersion.value) ::
   Nil
