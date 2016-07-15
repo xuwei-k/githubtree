@@ -34,9 +34,9 @@ resolvers += Resolver.url("typesafe", url("http://repo.typesafe.com/typesafe/ivy
 
 libraryDependencies ++= (
   ("net.databinder" %% "unfiltered-filter" % unfilteredVersion) ::
-  ("com.github.xuwei-k" %% "ghscala" % "0.3.0") ::
-  ("com.github.xuwei-k" %% "httpz-native" % "0.3.0") ::
-  ("com.chuusai" %% "shapeless" % "2.3.0") ::
+  ("com.github.xuwei-k" %% "ghscala" % "0.4.0") ::
+  ("com.github.xuwei-k" %% "httpz-native" % "0.4.0") ::
+  ("com.chuusai" %% "shapeless" % "2.3.1") ::
   ("javax.servlet" % "servlet-api" % "2.3" % "provided") ::
   ("org.scala-sbt" %% "io" % sbtVersion.value) ::
   Nil
