@@ -3,7 +3,7 @@ package githubtree
 import unfiltered.request._
 import unfiltered.response._
 import java.net.URL
-import sbt.Using
+import sbt.io.Using
 import httpz._, native._
 import ghscala._
 import scalaz.{Ordering => _, One => _, Two => _, _}
