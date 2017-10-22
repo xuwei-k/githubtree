@@ -8,7 +8,7 @@ licenses := Seq("MIT License" -> url("http://www.opensource.org/licenses/mit-lic
 
 version := "0.1.0-SNAPSHOT"
 
-scalaVersion := "2.12.2"
+scalaVersion := "2.12.4"
 
 scalacOptions ++= (
   "-language:postfixOps" ::
@@ -33,6 +33,6 @@ libraryDependencies ++= (
   ("com.github.xuwei-k" %% "httpz-native" % "0.5.1") ::
   ("com.chuusai" %% "shapeless" % "2.3.2") ::
   ("javax.servlet" % "javax.servlet-api" % "3.1.0" % "provided") ::
-  ("org.scala-sbt" %% "io" % "1.0.0-M11") ::
+  ("org.scala-sbt" %% "io" % "1.1.0") ::
   Nil
 )
