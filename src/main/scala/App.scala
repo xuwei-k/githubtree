@@ -120,9 +120,12 @@ class App extends unfiltered.filter.Plan {
         case httpz.Error.Http(e) =>
           System.err.println(e.toString)
           throw e
+        case p: httpz.Error.Parse =>
+          System.err.println(p.response.asUTF8StringBody)
+          throw p
         case e =>
           System.err.println(e)
-          throw new Exception(e.toString)
+          throw e
       }
     case GET(Path(Seg(user :: repo :: Nil)) & Params(p)) =>
       tree(GhInfo(user, repo)(), sortFunc(p), onlyFile(p))
