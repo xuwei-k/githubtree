@@ -31,7 +31,7 @@ libraryDependencies ++= (
   ("ws.unfiltered" %% "unfiltered-filter" % unfilteredVersion) ::
   ("com.github.xuwei-k" %% "ghscala" % "0.5.0") ::
   ("com.github.xuwei-k" %% "httpz-native" % "0.5.1") ::
-  ("com.chuusai" %% "shapeless" % "2.3.2") ::
+  ("com.chuusai" %% "shapeless" % "2.3.3") ::
   ("javax.servlet" % "javax.servlet-api" % "3.1.0" % "provided") ::
   ("org.scala-sbt" %% "io" % "1.1.0") ::
   Nil
