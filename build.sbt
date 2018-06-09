@@ -18,7 +18,6 @@ scalacOptions ++= (
   "-deprecation" ::
   "-unchecked" ::
   "-Xlint" ::
-  "-Ywarn-unused-import" ::
   "-Ywarn-unused" ::
   Nil
 )
