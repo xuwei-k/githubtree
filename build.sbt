@@ -1,4 +1,4 @@
-val unfilteredVersion = "0.9.1"
+val unfilteredVersion = "0.10.0-M2"
 
 name := "githubtree"
 
@@ -8,7 +8,7 @@ licenses := Seq("MIT License" -> url("http://www.opensource.org/licenses/mit-lic
 
 version := "0.1.0-SNAPSHOT"
 
-scalaVersion := "2.12.6"
+scalaVersion := "2.12.8"
 
 scalacOptions ++= (
   "-language:postfixOps" ::
@@ -32,6 +32,6 @@ libraryDependencies ++= (
   ("com.github.xuwei-k" %% "httpz-native" % "0.5.1") ::
   ("com.chuusai" %% "shapeless" % "2.3.3") ::
   ("javax.servlet" % "javax.servlet-api" % "3.1.0" % "provided") ::
-  ("org.scala-sbt" %% "io" % "1.1.0") ::
+  ("org.scala-sbt" %% "io" % "1.2.2") ::
   Nil
 )
