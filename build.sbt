@@ -1,4 +1,4 @@
-val unfilteredVersion = "0.10.0-M2"
+val unfilteredVersion = "0.10.0-M4"
 
 name := "githubtree"
 
@@ -8,7 +8,7 @@ licenses := Seq("MIT License" -> url("http://www.opensource.org/licenses/mit-lic
 
 version := "0.1.0-SNAPSHOT"
 
-scalaVersion := "2.12.8"
+scalaVersion := "2.13.0"
 
 scalacOptions ++= (
   "-language:postfixOps" ::
@@ -28,10 +28,10 @@ fullResolvers ~= {_.filterNot(_.name == "jcenter")}
 
 libraryDependencies ++= (
   ("ws.unfiltered" %% "unfiltered-filter" % unfilteredVersion) ::
-  ("com.github.xuwei-k" %% "ghscala" % "0.5.0") ::
-  ("com.github.xuwei-k" %% "httpz-native" % "0.5.1") ::
+  ("com.github.xuwei-k" %% "ghscala" % "0.6.0") ::
+  ("com.github.xuwei-k" %% "httpz-native" % "0.6.0") ::
   ("com.chuusai" %% "shapeless" % "2.3.3") ::
   ("javax.servlet" % "javax.servlet-api" % "3.1.0" % "provided") ::
-  ("org.scala-sbt" %% "io" % "1.2.2") ::
+  ("org.scala-sbt" %% "io" % "1.3.0-M11") ::
   Nil
 )
