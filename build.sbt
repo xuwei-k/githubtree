@@ -22,8 +22,6 @@ scalacOptions ++= (
   Nil
 )
 
-resolvers += Opts.resolver.sonatypeReleases
-
 fullResolvers ~= {_.filterNot(_.name == "jcenter")}
 
 libraryDependencies ++= (
