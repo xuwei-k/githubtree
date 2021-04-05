@@ -6,7 +6,7 @@ import java.net.URL
 import sbt.io.Using
 import httpz._, native._
 import ghscala._
-import scalaz.{Ordering => _, One => _, Two => _, _}
+import scalaz.{Ordering => _, _}
 
 object GithubApi{
 
