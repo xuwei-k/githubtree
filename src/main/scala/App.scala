@@ -50,7 +50,7 @@ final case class GhInfo(user: String, repo: String)(branch: String = GithubApi.d
     val link = {
       <x>{GITHUB}{user}/{repo}/{if(isFile)"blob"else"tree"}/{branch}/{path}</x>.text
     }
-    <span><a target="_blank" href={link}>{path}</a> {if(isFile) size + " bytes" else ""}</span>
+    <span><a target="_blank" href={link}>{path}</a> {if(isFile) s"${size} bytes" else ""}</span>
   }
 }
 
