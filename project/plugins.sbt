@@ -1,3 +1,1 @@
-addSbtPlugin("com.eed3si9n" % "sbt-appengine" % "0.8.0")
-
-fullResolvers ~= {_.filterNot(_.name == "jcenter")}
+addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.15.0")

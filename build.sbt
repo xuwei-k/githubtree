@@ -1,4 +1,4 @@
-val unfilteredVersion = "0.10.1"
+val unfilteredVersion = "0.12.0-M1"
 
 name := "githubtree"
 
@@ -25,11 +25,12 @@ scalacOptions ++= (
 fullResolvers ~= {_.filterNot(_.name == "jcenter")}
 
 libraryDependencies ++= (
-  ("ws.unfiltered" %% "unfiltered-filter" % unfilteredVersion) ::
+  ("com.google.cloud.functions" % "functions-framework-api" % "1.0.4") ::
+  ("ws.unfiltered" %% "unfiltered" % unfilteredVersion) ::
   ("com.github.xuwei-k" %% "ghscala" % "0.6.0") ::
-  ("com.github.xuwei-k" %% "httpz-native" % "0.7.0") ::
+  ("com.github.xuwei-k" %% "httpz-native" % "0.6.1") ::
   ("com.chuusai" %% "shapeless" % "2.3.3") ::
-  ("javax.servlet" % "javax.servlet-api" % "3.1.0" % "provided") ::
-  ("org.scala-sbt" %% "io" % "1.5.0") ::
   Nil
 )
+
+assembly / assemblyOutputPath := file("output") / "githubtree-assembly.jar"

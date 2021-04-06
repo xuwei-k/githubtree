@@ -2,11 +2,12 @@ package githubtree
 
 import unfiltered.request._
 import unfiltered.response._
+import com.google.cloud.functions.{HttpRequest, HttpResponse}
 import java.net.URL
-import sbt.io.Using
 import httpz._, native._
 import ghscala._
 import scalaz.{Ordering => _, _}
+import scala.util.Using
 
 object GithubApi{
 
@@ -57,7 +58,7 @@ final case class GhInfo(user: String, repo: String)(branch: String = GithubApi.d
 case class FileInfo(isFile: Boolean, name: String, size: Long)
 
 
-class App extends unfiltered.filter.Plan {
+class App extends UnfilteredCouldFunction {
   import GithubApi.GITHUB
 
   def showUserRepos(user: String, repositories: List[Repository]) = {
@@ -100,9 +101,7 @@ class App extends unfiltered.filter.Plan {
 
   private[this] final val githubRepo = "https://github.com/xuwei-k/githubtree"
 
-  val main: unfiltered.filter.Plan.Intent = {
-    case GET(Path("/")) =>
-      view(<h1><a href={githubRepo} target="_blank">{githubRepo}</a></h1>)
+  val main: unfiltered.Cycle.Intent[HttpRequest, HttpResponse] = {
     case GET(Path(Seg(user :: Nil)) & Params(Hub())) =>
       Github.repos(user).map( repos =>
         PlainTextContent ~> ResponseString(
@@ -147,8 +146,8 @@ class App extends unfiltered.filter.Plan {
   }
 
   val files = { (url: URL) =>
-    Using.urlInputStream(url){ in =>
-      Using.zipInputStream(in){ zipIn =>
+    Using.resource(url.openStream()){ in =>
+      Using.resource(new java.util.zip.ZipInputStream(in)){ zipIn =>
         Iterator.continually(zipIn.getNextEntry).takeWhile(null ne).map{ f =>
           FileInfo(! f.isDirectory, f.toString, f.getSize)
         }.toList

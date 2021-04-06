@@ -16,5 +16,4 @@ jobs:
       with:
         java-version: "adopt@1.8"
     - uses: coursier/cache-action@v6
-    - run: rm appengine.sbt && rm project/plugins.sbt
-    - run: sbt -v test
+    - run: sbt -v test assembly
